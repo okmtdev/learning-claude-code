@@ -16,7 +16,9 @@ npm test
 
 - `src/textUtils.js` … `slugify`, `truncate`, `wordCount`
 - `src/mathUtils.js` … `sum`, `average`, `fizzbuzz`
-- `test/*.test.js` … 上記の関数のテスト
+- `test/*.test.js` … 上記の関数のテスト（`npm test` で実行・常に緑）
+- `exercises/` … **わざとバグを入れた** 練習問題。`npm run test:exercise` で実行。
+  自己修正ループ（[docs/09](../docs/09-loops.md)）の題材で、デフォルトの `npm test` には含めない。
 
 ## 練習アイデア（Claude Code に頼んでみる）
 

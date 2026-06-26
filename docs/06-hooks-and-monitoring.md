@@ -107,15 +107,15 @@ echo "$line" >> "$LOG_FILE"
   ここはログ目的なので絶対にブロックしないようにしています。
 - jq が無くても落ちないようフォールバックを入れています。
 
-## 自分でフックを足してみる（練習）
+## ツール実行も記録している（PostToolUse）
 
-例: ファイルが編集されるたびにベルを鳴らす / ログを残す。
-`.claude/settings.json` の `hooks` に追記:
+このリポジトリでは `PostToolUse` フックも有効化済みで、
+`Bash` / `Edit` / `Write` / `MultiEdit` の実行後に `🔧 TOOL` をログに残します:
 
 ```json
 "PostToolUse": [
   {
-    "matcher": "Edit|Write",
+    "matcher": "Bash|Edit|Write|MultiEdit",
     "hooks": [
       { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/agent-logger.sh\" TOOL" }
     ]
@@ -123,7 +123,9 @@ echo "$line" >> "$LOG_FILE"
 ]
 ```
 
-すると編集のたびに `🔧 TOOL Edit` のような行がモニターに流れます。
+これにより、[09. 自己修正ループ](09-loops.md) で「テスト実行→修正→再実行」を繰り返す際、
+`🔧 TOOL Bash` / `🔧 TOOL Edit` が連続して流れ、**ループが回っている様子が見える**ようになります。
+（`Read`/`Grep` などは除外してノイズを抑えています。matcher を変えれば対象を調整できます）
 
 > 注意: フックは「自分のマシンで自分の権限で」実行されます。
 > 信頼できるコマンドだけを設定してください。

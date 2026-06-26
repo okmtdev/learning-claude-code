@@ -181,4 +181,4 @@ docker compose down -v
 
 ---
 
-[目次に戻る](../README.md) / 困ったら → [99. トラブルシューティング](99-troubleshooting.md)
+次へ → [09. ループエンジニアリング（自己修正ループ）](09-loops.md)

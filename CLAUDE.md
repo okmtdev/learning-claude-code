@@ -9,9 +9,9 @@ Claude Code（CLI）を手を動かして学ぶための教材。詳しくは `R
 
 ## ディレクトリ
 
-- `docs/` … ステップ別チュートリアル（01〜08, 99）
+- `docs/` … ステップ別チュートリアル（01〜09, 99）
 - `.claude/agents/` … カスタムサブエージェント（`code-explorer`, `test-runner`）
-- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`）
+- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`, `/fix-until-green`）
 - `.claude/hooks/agent-logger.sh` … フックから呼ばれるロガー（サブエージェント＋MCP呼び出しを記録）
 - `scripts/watch-agents.sh` … エージェント活動のリアルタイム監視ツール
 - `sandbox/` … 練習用 Node.js プロジェクト（依存なし）
@@ -19,7 +19,9 @@ Claude Code（CLI）を手を動かして学ぶための教材。詳しくは `R
 
 ## テスト
 
-- テストは `sandbox/` で実行する: `cd sandbox && npm test`
+- テストは `sandbox/` で実行する: `cd sandbox && npm test`（常に green を保つ）
+- `sandbox/exercises/` は**わざとバグ入り**（自己修正ループの題材, docs/09）。
+  実行は `npm run test:exercise`。デフォルトの `npm test` には含めない。
 - テストランナーは Node 標準（`node --test`）。外部依存は追加しない方針。
 
 ## コーディング方針

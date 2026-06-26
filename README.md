@@ -25,6 +25,7 @@ Claude Code（CLI）を **手を動かしながら** 学ぶための学習用リ
 | 6 | フックと仕組みの解説 | [docs/06-hooks-and-monitoring.md](docs/06-hooks-and-monitoring.md) |
 | 7 | MCP サーバー（概念） | [docs/07-mcp.md](docs/07-mcp.md) |
 | 8 | **Postgres を Docker + MCP で繋ぐ** 🐘 | [docs/08-mcp-postgres.md](docs/08-mcp-postgres.md) |
+| 9 | **ループエンジニアリング（自己修正ループ）** 🔁 | [docs/09-loops.md](docs/09-loops.md) |
 
 困ったら [docs/99-troubleshooting.md](docs/99-troubleshooting.md) を参照。
 
@@ -44,7 +45,8 @@ learning-claude-code/
 │   ├── commands/                 ← カスタムスラッシュコマンド
 │   │   ├── demo-agents.md        ← /demo-agents : 可視化デモ
 │   │   ├── review-diff.md        ← /review-diff : 差分レビュー
-│   │   └── db-report.md          ← /db-report   : Postgres 分析レポート（要MCP）
+│   │   ├── db-report.md          ← /db-report   : Postgres 分析レポート（要MCP）
+│   │   └── fix-until-green.md    ← /fix-until-green : テストが通るまで自走（loop）
 │   ├── hooks/
 │   │   └── agent-logger.sh       ← フックから呼ばれるロガー
 │   └── logs/                     ← アクティビティログ出力先（gitignore 済）
@@ -52,7 +54,8 @@ learning-claude-code/
 │   └── watch-agents.sh           ← ログをリアルタイム色付き表示する監視ツール
 ├── sandbox/                      ← 練習用 Node.js プロジェクト（依存なし）
 │   ├── src/                      ← 操作対象のサンプルコード
-│   └── test/                     ← node --test 用テスト
+│   ├── test/                     ← node --test 用テスト（npm test で緑）
+│   └── exercises/                ← わざとバグ入り。自己修正ループの題材（docs/09）
 ├── docker-compose.yml            ← 学習用 PostgreSQL（docs/08 で使用）
 └── db/init/                      ← Postgres 初期スキーマ＆サンプルデータ
 ```
