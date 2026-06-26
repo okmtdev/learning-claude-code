@@ -33,6 +33,9 @@ tool_name="$(field '.tool_name')"
 subagent="$(field '.tool_input.subagent_type')"
 description="$(field '.tool_input.description')"
 agent_type="$(field '.agent_type')"
+# MCP の execute_sql 系で渡される SQL（先頭60文字だけ表示）。
+sql="$(field '.tool_input.sql')"
+sql_short="$(printf '%s' "$sql" | tr '\n' ' ' | cut -c1-60)"
 
 line=""
 case "$EVENT" in
@@ -47,6 +50,14 @@ case "$EVENT" in
   TOOL)
     # PostToolUse: 任意のツール実行後（参考用）
     line="[$TS] 🔧 TOOL    ${tool_name:-?}"
+    ;;
+  MCP)
+    # PreToolUse(mcp__*): MCP サーバーのツール呼び出し（Postgres など）
+    if [ -n "$sql_short" ]; then
+      line="[$TS] 🗄️  MCP     ${tool_name:-?}  sql=\"${sql_short}\""
+    else
+      line="[$TS] 🗄️  MCP     ${tool_name:-?}"
+    fi
     ;;
   SESSION_START)
     line="[$TS] 🟢 SESSION START"

@@ -20,6 +20,15 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/agent-logger.sh\" TASK_START"
           }
         ]
+      },
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/agent-logger.sh\" MCP"
+          }
+        ]
       }
     ],
     "SubagentStop": [

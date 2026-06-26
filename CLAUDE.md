@@ -9,12 +9,13 @@ Claude Code（CLI）を手を動かして学ぶための教材。詳しくは `R
 
 ## ディレクトリ
 
-- `docs/` … ステップ別チュートリアル（01〜07, 99）
+- `docs/` … ステップ別チュートリアル（01〜08, 99）
 - `.claude/agents/` … カスタムサブエージェント（`code-explorer`, `test-runner`）
-- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`）
-- `.claude/hooks/agent-logger.sh` … フックから呼ばれるロガー
+- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`）
+- `.claude/hooks/agent-logger.sh` … フックから呼ばれるロガー（サブエージェント＋MCP呼び出しを記録）
 - `scripts/watch-agents.sh` … エージェント活動のリアルタイム監視ツール
 - `sandbox/` … 練習用 Node.js プロジェクト（依存なし）
+- `docker-compose.yml` / `db/init/` … 学習用 PostgreSQL と初期データ（docs/08, MCP 連携用）
 
 ## テスト
 

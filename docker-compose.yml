@@ -1,0 +1,30 @@
+# ローカル学習用 PostgreSQL。
+# 起動: docker compose up -d
+# 停止: docker compose down         （データは volume に残る）
+# 全消し: docker compose down -v     （volume も削除して初期化）
+#
+# 初回起動時に db/init/*.sql が自動実行され、サンプルスキーマ＆データが入る。
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: lcc-postgres
+    environment:
+      POSTGRES_USER: learner
+      POSTGRES_PASSWORD: learner
+      POSTGRES_DB: shop
+    ports:
+      # ホストの 5432 に公開。MCP サーバー(コンテナ)からは localhost が
+      # 自動的にホストへ remap される（crystaldba/postgres-mcp の機能）。
+      - "5432:5432"
+    volumes:
+      - lcc_pgdata:/var/lib/postgresql/data
+      # 初回起動時のみ実行される初期化スクリプト（ファイル名順）。
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U learner -d shop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  lcc_pgdata:
