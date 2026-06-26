@@ -44,6 +44,7 @@ tail -n 20 -f "$LOG_FILE" | while IFS= read -r line; do
     *"🔵 MAIN AGENT"*)    echo "${BLUE}${line}${RESET}" ;;
     *"🔧 TOOL"*)          echo "${CYAN}${line}${RESET}" ;;
     *"🗄️"*)               echo "${RED}${line}${RESET}" ;;
+    *"🤖 MCP"*)           echo "${BOLD}${BLUE}${line}${RESET}" ;;
     *)                    echo "${line}" ;;
   esac
 done
