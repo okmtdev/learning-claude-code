@@ -1,0 +1,11 @@
+{
+  "name": "claude-code-sandbox",
+  "version": "1.0.0",
+  "description": "Claude Code を試すための練習用サンドボックス（依存パッケージ不要）",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\"",
+    "test:exercise": "node --test \"exercises/**/*.test.js\""
+  },
+  "license": "MIT"
+}

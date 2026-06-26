@@ -1,0 +1,9 @@
+# Claude Code が生成するアクティビティログ（実体は追跡しない）
+.claude/logs/*.log
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
