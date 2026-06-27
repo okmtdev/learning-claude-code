@@ -9,5 +9,8 @@ npm-debug.log*
 .env
 **/.env
 
+# 生成された画像（docs/10, generate_image ツールの出力）
+generated/
+
 # OS
 .DS_Store

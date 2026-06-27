@@ -19,8 +19,29 @@
 //
 // 重要: stdout には MCP メッセージ以外を絶対に書かない。ログは stderr へ。
 
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join, isAbsolute, dirname } from "node:path";
+
 const BACKEND = process.env.GEMINI_BACKEND || "mock";
 const log = (...a) => process.stderr.write(`[gemini-mcp] ${a.join(" ")}\n`);
+
+// 画像の保存先ルート（既定はプロジェクト直下の generated/）。
+function projectRoot() {
+  return process.env.CLAUDE_PROJECT_DIR || process.cwd();
+}
+function saveImage(buf, mimeType, outPath) {
+  const mt = mimeType || "image/png";
+  const ext = mt.includes("jpeg") || mt.includes("jpg") ? "jpg" : (mt.split("/")[1] || "png");
+  let target;
+  if (outPath) {
+    target = isAbsolute(outPath) ? outPath : join(projectRoot(), outPath);
+  } else {
+    target = join(projectRoot(), "generated", `gemini-${Date.now()}.${ext}`);
+  }
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, buf);
+  return target;
+}
 
 // ---- バックエンド実装 ----------------------------------------------------
 
@@ -73,6 +94,53 @@ async function askBackend(prompt) {
   }
 }
 
+// ---- 画像生成 ------------------------------------------------------------
+
+// 1x1 透明 PNG（mock 用のダミー画像）。
+const ONE_PX_PNG =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+
+function generateImageMock(prompt, outPath) {
+  const buf = Buffer.from(ONE_PX_PNG, "base64");
+  const saved = saveImage(buf, "image/png", outPath);
+  return { saved, text: `(モック) ダミーPNGを保存。GEMINI_BACKEND=api で実画像になります。prompt="${prompt.slice(0, 40)}"` };
+}
+
+async function generateImageApi(prompt, outPath) {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("GEMINI_API_KEY が未設定です（画像生成には api バックエンドが必要）");
+  const model = process.env.GEMINI_IMAGE_MODEL || "gemini-2.5-flash-image";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Gemini API エラー ${res.status}: ${body.slice(0, 300)}`);
+  }
+  const data = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts ?? [];
+  const imgPart = parts.find((p) => p.inlineData?.data || p.inline_data?.data);
+  if (!imgPart) throw new Error(`画像が返りませんでした: ${JSON.stringify(data).slice(0, 300)}`);
+  const inline = imgPart.inlineData || imgPart.inline_data;
+  const buf = Buffer.from(inline.data, "base64");
+  const saved = saveImage(buf, inline.mimeType || inline.mime_type, outPath);
+  const text = parts.filter((p) => p.text).map((p) => p.text).join(" ").trim();
+  return { saved, text };
+}
+
+async function generateImage(prompt, outPath) {
+  if (BACKEND === "ollama") {
+    throw new Error("Ollama(Gemma) では画像生成できません。GEMINI_BACKEND=api を使ってください。");
+  }
+  return BACKEND === "api" ? generateImageApi(prompt, outPath) : generateImageMock(prompt, outPath);
+}
+
 // ---- MCP ツール定義 ------------------------------------------------------
 
 const TOOLS = [
@@ -85,6 +153,23 @@ const TOOLS = [
       type: "object",
       properties: {
         prompt: { type: "string", description: "外部モデルへ渡すプロンプト全文" },
+      },
+      required: ["prompt"],
+    },
+  },
+  {
+    name: "generate_image",
+    description:
+      "Gemini の画像生成モデル(gemini-2.5-flash-image)で画像を生成し、ファイルに保存してパスを返す。" +
+      "Claude は画像を生成できないため、画像が必要なときにこのツールへ委譲する。api バックエンド限定。",
+    inputSchema: {
+      type: "object",
+      properties: {
+        prompt: { type: "string", description: "生成したい画像の説明（英語推奨だが日本語も可）" },
+        out_path: {
+          type: "string",
+          description: "保存先パス（任意）。相対パスはプロジェクト基準。未指定なら generated/ に自動命名で保存。",
+        },
       },
       required: ["prompt"],
     },
@@ -127,22 +212,32 @@ async function handle(msg) {
     case "tools/call": {
       const name = params?.name;
       const args = params?.arguments || {};
-      if (name !== "ask_gemini") {
-        replyError(id, -32602, `未知のツール: ${name}`);
-        return;
-      }
       const prompt = String(args.prompt ?? "").trim();
       if (!prompt) {
         reply(id, { content: [{ type: "text", text: "prompt が空です" }], isError: true });
         return;
       }
-      try {
-        log(`ask_gemini backend=${BACKEND} promptLen=${prompt.length}`);
-        const text = await askBackend(prompt);
-        reply(id, { content: [{ type: "text", text }] });
-      } catch (e) {
-        reply(id, { content: [{ type: "text", text: `エラー: ${e.message}` }], isError: true });
+      if (name === "ask_gemini") {
+        try {
+          log(`ask_gemini backend=${BACKEND} promptLen=${prompt.length}`);
+          const text = await askBackend(prompt);
+          reply(id, { content: [{ type: "text", text }] });
+        } catch (e) {
+          reply(id, { content: [{ type: "text", text: `エラー: ${e.message}` }], isError: true });
+        }
+        return;
       }
+      if (name === "generate_image") {
+        try {
+          log(`generate_image backend=${BACKEND} promptLen=${prompt.length}`);
+          const { saved, text } = await generateImage(prompt, args.out_path);
+          reply(id, { content: [{ type: "text", text: `画像を保存しました: ${saved}${text ? "\n" + text : ""}` }] });
+        } catch (e) {
+          reply(id, { content: [{ type: "text", text: `エラー: ${e.message}` }], isError: true });
+        }
+        return;
+      }
+      replyError(id, -32602, `未知のツール: ${name}`);
       return;
     }
     default:

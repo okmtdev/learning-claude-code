@@ -9,14 +9,15 @@ Claude Code（CLI）を手を動かして学ぶための教材。詳しくは `R
 
 ## ディレクトリ
 
-- `docs/` … ステップ別チュートリアル（01〜10, 99）
+- `docs/` … ステップ別チュートリアル（01〜11, 99）
 - `.claude/agents/` … カスタムサブエージェント（`code-explorer`, `test-runner`）
-- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`, `/fix-until-green`, `/second-opinion`）
+- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`, `/fix-until-green`, `/second-opinion`, `/make-image`）
 - `.claude/hooks/agent-logger.sh` … フックから呼ばれるロガー（サブエージェント＋MCP呼び出しを記録）
 - `scripts/watch-agents.sh` … エージェント活動のリアルタイム監視ツール
 - `sandbox/` … 練習用 Node.js プロジェクト（依存なし）
 - `docker-compose.yml` / `db/init/` … 学習用 PostgreSQL と初期データ（docs/08, MCP 連携用）
-- `mcp-servers/gemini/` … 外部モデル(Gemini/Ollama)を ask_gemini ツールにする自作 MCP サーバー（docs/10）
+- `mcp-servers/gemini/` … 外部モデル(Gemini/Ollama)を ask_gemini / generate_image ツールにする自作 MCP サーバー（docs/10-11）
+- `generated/` … generate_image の出力先（生成物。gitignore 済）
 
 ## テスト
 

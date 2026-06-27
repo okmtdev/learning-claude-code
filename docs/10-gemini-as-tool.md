@@ -183,4 +183,4 @@ rm -f mcp-servers/gemini/.env
 
 ---
 
-[目次に戻る](../README.md) / 困ったら → [99. トラブルシューティング](99-troubleshooting.md)
+次へ → [11. 画像生成を Gemini に委譲する](11-image-generation.md)
