@@ -9,8 +9,9 @@ Claude Code（CLI）を手を動かして学ぶための教材。詳しくは `R
 
 ## ディレクトリ
 
-- `docs/` … ステップ別チュートリアル（01〜14, 99）
+- `docs/` … ステップ別チュートリアル（01〜19, 99）
 - `.claude/agents/` … カスタムサブエージェント（`code-explorer`, `test-runner`, `reviewer`）
+- `.claude/skills/` … スキル（`repo-conventions`, `release-notes`, `explain-arch`）（docs/15）
 - `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`, `/fix-until-green`, `/second-opinion`, `/make-image`, `/parallel-audit`）
 - `.claude/hooks/agent-logger.sh` … フックから呼ばれるロガー（サブエージェント＋MCP呼び出しを記録）
 - `.claude/hooks/guard.sh` … 危険な Bash コマンドを弾く PreToolUse 安全ガード（docs/13）

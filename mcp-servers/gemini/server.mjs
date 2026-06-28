@@ -176,6 +176,75 @@ const TOOLS = [
   },
 ];
 
+// ---- MCP リソース定義（読み取り専用データ） ------------------------------
+// リソースは「Claude が参照できるデータ」。@gemini-mcp:... の形で添付できる。
+
+const ABOUT_TEXT = `# gemini-mcp について
+
+外部モデル(Gemini / ローカル Ollama)を Claude のツールにする学習用 MCP サーバー。
+
+## ツール
+- ask_gemini(prompt): 別モデルに質問してテキスト回答を得る（セカンドオピニオン・要約など）
+- generate_image(prompt, out_path?): 画像を生成して保存（api バックエンド限定）
+
+## バックエンド（環境変数 GEMINI_BACKEND）
+- mock   : 通信なし。配線確認用（既定）
+- api    : Google Gemini API（要 GEMINI_API_KEY）
+- ollama : ローカル Ollama（完全ローカル。画像生成は不可）
+
+現在のバックエンド: ${BACKEND}
+`;
+
+const RESOURCES = [
+  {
+    uri: "gemini://about",
+    name: "gemini-mcp について",
+    description: "この MCP サーバーの概要・ツール・バックエンド設定",
+    mimeType: "text/markdown",
+  },
+];
+
+function readResource(uri) {
+  switch (uri) {
+    case "gemini://about":
+      return { uri, mimeType: "text/markdown", text: ABOUT_TEXT };
+    default:
+      return null;
+  }
+}
+
+// ---- MCP プロンプト定義（再利用可能なプロンプトテンプレート） --------------
+// プロンプトは Claude Code で /mcp__gemini__<name> のように呼べる。
+
+const PROMPTS = [
+  {
+    name: "second_opinion",
+    description: "指定トピックについて、別モデルにセカンドオピニオンを求めるプロンプトを生成する",
+    arguments: [
+      { name: "topic", description: "レビュー/検証したい対象や論点", required: true },
+    ],
+  },
+];
+
+function getPrompt(name, args) {
+  if (name !== "second_opinion") return null;
+  const topic = args?.topic || "(未指定)";
+  return {
+    description: "セカンドオピニオン用プロンプト",
+    messages: [
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text:
+            `次について批判的にレビューしてください: ${topic}\n` +
+            `- 見落とし・誤り・リスクを挙げる\n- 代替案があれば提示する\n- 最後に「結論」を1〜2文で`,
+        },
+      },
+    ],
+  };
+}
+
 // ---- JSON-RPC / stdio ----------------------------------------------------
 
 function send(msg) {
@@ -197,8 +266,9 @@ async function handle(msg) {
     case "initialize":
       reply(id, {
         protocolVersion: params?.protocolVersion || "2024-11-05",
-        capabilities: { tools: {} },
-        serverInfo: { name: "gemini-mcp", version: "1.0.0" },
+        // tools だけでなく resources / prompts も提供することを宣言（docs/17）。
+        capabilities: { tools: {}, resources: {}, prompts: {} },
+        serverInfo: { name: "gemini-mcp", version: "1.1.0" },
       });
       return;
     case "notifications/initialized":
@@ -209,6 +279,31 @@ async function handle(msg) {
     case "tools/list":
       reply(id, { tools: TOOLS });
       return;
+    case "resources/list":
+      reply(id, { resources: RESOURCES });
+      return;
+    case "resources/read": {
+      const uri = params?.uri;
+      const content = readResource(uri);
+      if (!content) {
+        replyError(id, -32602, `未知のリソース: ${uri}`);
+        return;
+      }
+      reply(id, { contents: [content] });
+      return;
+    }
+    case "prompts/list":
+      reply(id, { prompts: PROMPTS });
+      return;
+    case "prompts/get": {
+      const result = getPrompt(params?.name, params?.arguments);
+      if (!result) {
+        replyError(id, -32602, `未知のプロンプト: ${params?.name}`);
+        return;
+      }
+      reply(id, result);
+      return;
+    }
     case "tools/call": {
       const name = params?.name;
       const args = params?.arguments || {};
