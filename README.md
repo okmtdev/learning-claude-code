@@ -28,6 +28,9 @@ Claude Code（CLI）を **手を動かしながら** 学ぶための学習用リ
 | 9 | **ループエンジニアリング（自己修正ループ）** 🔁 | [docs/09-loops.md](docs/09-loops.md) |
 | 10 | **外部モデル(Gemini)を Claude の下請けにする** 🤖 | [docs/10-gemini-as-tool.md](docs/10-gemini-as-tool.md) |
 | 11 | **画像生成を Gemini に委譲する** 🎨 | [docs/11-image-generation.md](docs/11-image-generation.md) |
+| 12 | **Headless モードと自動化** ⚙️ | [docs/12-headless-automation.md](docs/12-headless-automation.md) |
+| 13 | **権限とセキュリティ** 🔒 | [docs/13-permissions-security.md](docs/13-permissions-security.md) |
+| 14 | **マルチエージェント・オーケストレーション** 🧩 | [docs/14-multi-agent.md](docs/14-multi-agent.md) |
 
 困ったら [docs/99-troubleshooting.md](docs/99-troubleshooting.md) を参照。
 
@@ -43,19 +46,23 @@ learning-claude-code/
 │   ├── settings.json             ← フック設定（エージェント可視化の心臓部）
 │   ├── agents/                   ← カスタムサブエージェント定義
 │   │   ├── code-explorer.md      ← 読み取り専用の調査エージェント
-│   │   └── test-runner.md        ← テスト実行エージェント
+│   │   ├── test-runner.md        ← テスト実行エージェント
+│   │   └── reviewer.md           ← 批判的レビュー役（docs/14）
 │   ├── commands/                 ← カスタムスラッシュコマンド
 │   │   ├── demo-agents.md        ← /demo-agents : 可視化デモ
 │   │   ├── review-diff.md        ← /review-diff : 差分レビュー
 │   │   ├── db-report.md          ← /db-report   : Postgres 分析レポート（要MCP）
 │   │   ├── fix-until-green.md    ← /fix-until-green : テストが通るまで自走（loop）
 │   │   ├── second-opinion.md     ← /second-opinion : Gemini にクロスチェック（要MCP）
-│   │   └── make-image.md         ← /make-image  : 画像生成を Gemini に委譲（要MCP）
+│   │   ├── make-image.md         ← /make-image  : 画像生成を Gemini に委譲（要MCP）
+│   │   └── parallel-audit.md     ← /parallel-audit : 複数エージェント並列監査（docs/14）
 │   ├── hooks/
-│   │   └── agent-logger.sh       ← フックから呼ばれるロガー
+│   │   ├── agent-logger.sh       ← フックから呼ばれるロガー
+│   │   └── guard.sh              ← 危険な Bash を弾く安全ガード（docs/13）
 │   └── logs/                     ← アクティビティログ出力先（gitignore 済）
 ├── scripts/
-│   └── watch-agents.sh           ← ログをリアルタイム色付き表示する監視ツール
+│   ├── watch-agents.sh           ← ログをリアルタイム色付き表示する監視ツール
+│   └── ai-commit-msg.sh          ← headless でコミットメッセージ生成（docs/12）
 ├── sandbox/                      ← 練習用 Node.js プロジェクト（依存なし）
 │   ├── src/                      ← 操作対象のサンプルコード
 │   ├── test/                     ← node --test 用テスト（npm test で緑）
