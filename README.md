@@ -26,6 +26,8 @@ Claude Code（CLI）を **手を動かしながら** 学ぶための学習用リ
 | 7 | MCP サーバー（概念） | [docs/07-mcp.md](docs/07-mcp.md) |
 | 8 | **Postgres を Docker + MCP で繋ぐ** 🐘 | [docs/08-mcp-postgres.md](docs/08-mcp-postgres.md) |
 | 9 | **ループエンジニアリング（自己修正ループ）** 🔁 | [docs/09-loops.md](docs/09-loops.md) |
+| 10 | **外部モデル(Gemini)を Claude の下請けにする** 🤖 | [docs/10-gemini-as-tool.md](docs/10-gemini-as-tool.md) |
+| 11 | **画像生成を Gemini に委譲する** 🎨 | [docs/11-image-generation.md](docs/11-image-generation.md) |
 
 困ったら [docs/99-troubleshooting.md](docs/99-troubleshooting.md) を参照。
 
@@ -46,7 +48,9 @@ learning-claude-code/
 │   │   ├── demo-agents.md        ← /demo-agents : 可視化デモ
 │   │   ├── review-diff.md        ← /review-diff : 差分レビュー
 │   │   ├── db-report.md          ← /db-report   : Postgres 分析レポート（要MCP）
-│   │   └── fix-until-green.md    ← /fix-until-green : テストが通るまで自走（loop）
+│   │   ├── fix-until-green.md    ← /fix-until-green : テストが通るまで自走（loop）
+│   │   ├── second-opinion.md     ← /second-opinion : Gemini にクロスチェック（要MCP）
+│   │   └── make-image.md         ← /make-image  : 画像生成を Gemini に委譲（要MCP）
 │   ├── hooks/
 │   │   └── agent-logger.sh       ← フックから呼ばれるロガー
 │   └── logs/                     ← アクティビティログ出力先（gitignore 済）
@@ -57,7 +61,8 @@ learning-claude-code/
 │   ├── test/                     ← node --test 用テスト（npm test で緑）
 │   └── exercises/                ← わざとバグ入り。自己修正ループの題材（docs/09）
 ├── docker-compose.yml            ← 学習用 PostgreSQL（docs/08 で使用）
-└── db/init/                      ← Postgres 初期スキーマ＆サンプルデータ
+├── db/init/                      ← Postgres 初期スキーマ＆サンプルデータ
+└── mcp-servers/gemini/           ← Gemini/Ollama を ask_gemini / generate_image ツールにする自作MCP（docs/10-11）
 ```
 
 ---

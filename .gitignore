@@ -5,5 +5,12 @@
 node_modules/
 npm-debug.log*
 
+# APIキー等の秘密情報（.env はコミットしない。.env.example のみ追跡）
+.env
+**/.env
+
+# 生成された画像（docs/10, generate_image ツールの出力）
+generated/
+
 # OS
 .DS_Store

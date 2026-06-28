@@ -116,4 +116,4 @@ sandbox/exercises のテストが全部通るまで、実装を修正→npm run 
 
 ---
 
-[目次に戻る](../README.md) / 困ったら → [99. トラブルシューティング](99-troubleshooting.md)
+次へ → [10. 外部モデル(Gemini)を Claude の下請けにする](10-gemini-as-tool.md)

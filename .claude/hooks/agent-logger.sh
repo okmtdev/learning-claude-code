@@ -52,12 +52,24 @@ case "$EVENT" in
     line="[$TS] 🔧 TOOL    ${tool_name:-?}"
     ;;
   MCP)
-    # PreToolUse(mcp__*): MCP サーバーのツール呼び出し（Postgres など）
-    if [ -n "$sql_short" ]; then
-      line="[$TS] 🗄️  MCP     ${tool_name:-?}  sql=\"${sql_short}\""
-    else
-      line="[$TS] 🗄️  MCP     ${tool_name:-?}"
-    fi
+    # PreToolUse(mcp__*): MCP サーバーのツール呼び出し（Postgres / Gemini など）
+    case "$tool_name" in
+      *generate_image*)
+        prompt_short="$(field '.tool_input.prompt' | tr '\n' ' ' | cut -c1-50)"
+        line="[$TS] 🎨 MCP     ${tool_name}  prompt=\"${prompt_short}\""
+        ;;
+      *gemini*)
+        prompt_short="$(field '.tool_input.prompt' | tr '\n' ' ' | cut -c1-50)"
+        line="[$TS] 🤖 MCP     ${tool_name}  prompt=\"${prompt_short}\""
+        ;;
+      *)
+        if [ -n "$sql_short" ]; then
+          line="[$TS] 🗄️  MCP     ${tool_name:-?}  sql=\"${sql_short}\""
+        else
+          line="[$TS] 🗄️  MCP     ${tool_name:-?}"
+        fi
+        ;;
+    esac
     ;;
   SESSION_START)
     line="[$TS] 🟢 SESSION START"
