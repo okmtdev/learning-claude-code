@@ -31,6 +31,11 @@ Claude Code（CLI）を **手を動かしながら** 学ぶための学習用リ
 | 12 | **Headless モードと自動化** ⚙️ | [docs/12-headless-automation.md](docs/12-headless-automation.md) |
 | 13 | **権限とセキュリティ** 🔒 | [docs/13-permissions-security.md](docs/13-permissions-security.md) |
 | 14 | **マルチエージェント・オーケストレーション** 🧩 | [docs/14-multi-agent.md](docs/14-multi-agent.md) |
+| 15 | **Skills（エージェントスキル）を使いこなす** 📚 | [docs/15-skills.md](docs/15-skills.md) |
+| 16 | **コンテキスト管理** 🧠 | [docs/16-context-management.md](docs/16-context-management.md) |
+| 17 | **MCPサーバーを自作する（tools/resources/prompts）** 🛠️ | [docs/17-mcp-authoring.md](docs/17-mcp-authoring.md) |
+| 18 | **モデル選択とコスト戦略** 💰 | [docs/18-models-and-cost.md](docs/18-models-and-cost.md) |
+| 19 | **総仕上げ Capstone** 🎓 | [docs/19-capstone.md](docs/19-capstone.md) |
 
 困ったら [docs/99-troubleshooting.md](docs/99-troubleshooting.md) を参照。
 
@@ -56,6 +61,10 @@ learning-claude-code/
 │   │   ├── second-opinion.md     ← /second-opinion : Gemini にクロスチェック（要MCP）
 │   │   ├── make-image.md         ← /make-image  : 画像生成を Gemini に委譲（要MCP）
 │   │   └── parallel-audit.md     ← /parallel-audit : 複数エージェント並列監査（docs/14）
+│   ├── skills/                   ← スキル（docs/15）
+│   │   ├── repo-conventions/     ← 規約の背景知識＋段階的開示
+│   │   ├── release-notes/        ← スクリプト同梱＋動的注入（手動専用）
+│   │   └── explain-arch/         ← context:fork で独立実行
 │   ├── hooks/
 │   │   ├── agent-logger.sh       ← フックから呼ばれるロガー
 │   │   └── guard.sh              ← 危険な Bash を弾く安全ガード（docs/13）
