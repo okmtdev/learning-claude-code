@@ -9,11 +9,13 @@ Claude Code（CLI）を手を動かして学ぶための教材。詳しくは `R
 
 ## ディレクトリ
 
-- `docs/` … ステップ別チュートリアル（01〜11, 99）
-- `.claude/agents/` … カスタムサブエージェント（`code-explorer`, `test-runner`）
-- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`, `/fix-until-green`, `/second-opinion`, `/make-image`）
+- `docs/` … ステップ別チュートリアル（01〜14, 99）
+- `.claude/agents/` … カスタムサブエージェント（`code-explorer`, `test-runner`, `reviewer`）
+- `.claude/commands/` … カスタムスラッシュコマンド（`/demo-agents`, `/review-diff`, `/db-report`, `/fix-until-green`, `/second-opinion`, `/make-image`, `/parallel-audit`）
 - `.claude/hooks/agent-logger.sh` … フックから呼ばれるロガー（サブエージェント＋MCP呼び出しを記録）
+- `.claude/hooks/guard.sh` … 危険な Bash コマンドを弾く PreToolUse 安全ガード（docs/13）
 - `scripts/watch-agents.sh` … エージェント活動のリアルタイム監視ツール
+- `scripts/ai-commit-msg.sh` … headless(`claude -p`) でコミットメッセージを生成（docs/12）
 - `sandbox/` … 練習用 Node.js プロジェクト（依存なし）
 - `docker-compose.yml` / `db/init/` … 学習用 PostgreSQL と初期データ（docs/08, MCP 連携用）
 - `mcp-servers/gemini/` … 外部モデル(Gemini/Ollama)を ask_gemini / generate_image ツールにする自作 MCP サーバー（docs/10-11）
